@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//const URL = "https://shortly007.herokuapp.com/";
-const URL = "http://localhost:4000/";
+const URL = "https://shortly007.herokuapp.com/";
+
 function postCreat(obj){
     const promise = axios.post(`${URL}signup`,obj);
     return promise;
@@ -35,8 +35,8 @@ function deletShortly(id,header){
 }
 
 function getOpen(short){
-    return axios.get(`${URL}urls/open/${short}`);
-        
+    const promise = axios.get(`${URL}urls/open/${short}`);
+    return promise;
 }
 
 export{ getOpen, getUser, getRanking, postUrl, postLogin, postCreat, deletShortly };
