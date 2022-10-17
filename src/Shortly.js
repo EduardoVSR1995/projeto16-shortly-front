@@ -48,14 +48,13 @@ export default function Extract() {
     }
 
     function open(short){
-        getOpen(short).then((value)=> window.rel(value) )
+        getOpen(short).then(load).catch(load)
     }
-
-    console.log(add, user, boolean)
+console.log(add)
     return (
 
         <AllContainer>
-            <Container width={'100%'} ><span> Seja bem-vindo(a), {add.name ? add.name : "loading..."} <h1> <h2> Home </h2>&nbsp;&nbsp;&nbsp;<h2 onClick={rank}> Ranking </h2> &nbsp;&nbsp;&nbsp; <h2 onClick={() => rank(true)}> Sair </h2></h1> </span></Container>
+            <Container width={'100%'} ><span> Seja bem-vindo(a), {add.name ? add.name : "loading..."} seus shortlys tem {add.visitCount ? add.visitCount : "0"} visualizaçõe <h1> <h2> Home </h2>&nbsp;&nbsp;&nbsp;<h2 onClick={rank}> Ranking </h2> &nbsp;&nbsp;&nbsp; <h2 onClick={() => rank(true)}> Sair </h2></h1> </span></Container>
             <p> Shortly <img src={short} /> </p>
             <Allextracts>
                 <form onSubmit={submitObj} >
