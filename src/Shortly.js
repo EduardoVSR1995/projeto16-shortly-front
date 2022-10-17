@@ -11,21 +11,21 @@ import trash from './imags/Vector.png'
 export default function Extract() {
     const { user, setUser } = useContext(UserContext);
     const [boolean, setBoolean] = useState(false);
-    const [add, setAdd] = useState({shortenedUrls:[]});
+    const [add, setAdd] = useState({ shortenedUrls: [] });
     const navigat = useNavigate()
 
     useEffect(() => {
         load()
     }, []);
 
-    function load(){
-        getUser({ headers: { Authorization: `Bearer ${user.token}` } }).catch(value=>{ 
+    function load() {
+        getUser({ headers: { Authorization: `Bearer ${user.token}` } }).catch(value => {
             console.log(value)
             setBoolean(false)
-            }).then(value=>{
+        }).then(value => {
             setAdd(value.data)
             setBoolean(false)
-            })
+        })
     }
 
     function rank(value) {
@@ -42,15 +42,14 @@ export default function Extract() {
         })
     }
 
-    function del(value){
+    function del(value) {
         console.log(value)
-        deletShortly(value, { headers: { Authorization: `Bearer ${user.token}` } } ).then(()=>load())
+        deletShortly(value, { headers: { Authorization: `Bearer ${user.token}` } }).then(() => load())
     }
 
-    function open(short){
+    function open(short) {
         getOpen(short).then(load).catch(load)
     }
-console.log(add)
     return (
 
         <AllContainer>
@@ -61,7 +60,7 @@ console.log(add)
                     <Input type={"url"} background={boolean} placeholder={"Links que cabem no bolso"} onChange={e => setAdd({ ...add, url: e.target.value })} readOnly={boolean} required="required" />
                     <Button type={"submit"} width={"50%"} heigt={"60px"} >Encurtar link</Button>
                 </form>
-                {add.shortenedUrls.lenght === 0 ?  <Container> Ainda não tem nem um shortly :/ manda um ai ;) </Container>: add.shortenedUrls.map((value, index) => <Container background={"#80cc74"} key={index} width={"95%"} height={"65px"} ><span><h1> {value.url} </h1><h2 onClick={()=>open(value.shortUrl)} > {value.shortUrl} </h2> <h1>Quantidade de visitas: {value.visitCount} </h1> <p onClick={()=>del(value.id)} ><img src={trash} /></p></span></Container>) }
+                {add.shortenedUrls.lenght === 0 ? <Container> Ainda não tem nem um shortly :/ manda um ai ;) </Container> : add.shortenedUrls.map((value, index) => <Container background={"#80cc74"} key={index} width={"95%"} height={"65px"} ><span><h1> {value.url} </h1><h2 onClick={() => open(value.shortUrl)} > {value.shortUrl} </h2> <h1>Quantidade de visitas: {value.visitCount} </h1> <p onClick={() => del(value.id)} ><img src={trash} /></p></span></Container>)}
             </Allextracts>
         </AllContainer>
     )
@@ -74,6 +73,9 @@ const Allextracts = styled.div`
 
     }
     h1{
+        overflow: auto ;
+    scroll-behavior:none;
+    ::-webkit-scrollbar { display: none; }
         align-items: center ;
         justify-content: center ;
         padding: 10px ;
@@ -104,7 +106,8 @@ const Allextracts = styled.div`
     margin-top: 20px ;
     height: 90% ;
     width: 100% ;
-    overflow: scroll ;
+    overflow: auto ;
+    scroll-behavior:none;
     ::-webkit-scrollbar { display: none; }
     
 
