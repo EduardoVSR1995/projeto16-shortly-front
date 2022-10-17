@@ -29,14 +29,14 @@ function getUser(header){
 
 }
 
-function deletCont(header){
-    const promise = axios.delete(`${URL}MyExtract`, header);
+function deletShortly(id,header){
+    const promise = axios.delete(`${URL}urls/${id}`, header);
     return promise;    
 }
 
-function patchModfi(obj , header){
-    const promise = axios.patch(`${URL}MyExtract`,obj, header);
-    return promise;    
+function getOpen(short){
+    return axios.get(`${URL}urls/open/${short}`);
+        
 }
 
-export{ patchModfi, getUser, getRanking, postUrl, postLogin, postCreat, deletCont };
+export{ getOpen, getUser, getRanking, postUrl, postLogin, postCreat, deletShortly };

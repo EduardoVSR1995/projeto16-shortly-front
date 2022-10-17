@@ -1,6 +1,6 @@
-import { getUser , postUrl} from "./parts/shortly";
+import { deletShortly, getOpen, getUser, postUrl } from "./parts/shortly";
 import { useState, useEffect, useContext } from "react";
-import { Button, Container, Input} from "./parts/Subparts";
+import { Button, Container, Input } from "./parts/Subparts";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import short from './imags/twemoji_shorts.png';
@@ -10,43 +10,61 @@ import trash from './imags/Vector.png'
 
 export default function Extract() {
     const { user, setUser } = useContext(UserContext);
-    const [boolean , setBoolean] = useState(false);
+    const [boolean, setBoolean] = useState(false);
     const [add, setAdd] = useState([]);
     const navigat = useNavigate()
-    
-    useEffect( () => {
-       getUser({ headers: { Authorization: `Bearer ${user.token}` } }).catch((value)=> console.log(value)).then((value)=> setAdd(value.data))
+
+    useEffect(() => {
+        load()
     }, []);
 
-    function rank(value){
-        if(value) setUser([]);   
+    function load(){
+        getUser({ headers: { Authorization: `Bearer ${user.token}` } }).catch(value=>{ 
+            console.log(value)
+            setBoolean(false)
+            }).then(value=>{
+            setAdd(value.data)
+            setBoolean(false)
+            })
+    }
+
+    function rank(value) {
+        if (value) setUser([]);
         navigat('/')
     }
 
-    function submitObj(event){
+    function submitObj(event) {
         setBoolean(!boolean)
         event.preventDefault();
-        postUrl({url: add.url}, { headers: { Authorization: `Bearer ${user.token}` } }).catch((value)=> console.log(value)).then(value => {
-            alert(`Nova shortly criada :) ${value.data.shortUrl}`)
-            getUser({ headers: { Authorization: `Bearer ${user.token}` } }).catch((value)=> console.log(value)).then((value)=> setAdd(value.data))
-            
+        postUrl({ url: add.url }, { headers: { Authorization: `Bearer ${user.token}` } }).catch((value) => console.log(value)).then(value => {
+            alert(`Nova shortly criada :) ${value.data.shortUrl}`);
+            load();
         })
     }
 
-    console.log(add , user)
+    function del(value){
+        console.log(value)
+        deletShortly(value, { headers: { Authorization: `Bearer ${user.token}` } } ).then(()=>load())
+    }
+
+    function open(short){
+        getOpen(short).then((value)=> window.rel(value) )
+    }
+
+    console.log(add, user, boolean)
     return (
 
-            <AllContainer>
-                <Container width={'100%'} ><span> Seja bem-vindo(a), {add.name ? add.name : "loading..." } <h1> <h2> Home </h2>&nbsp;&nbsp;&nbsp;<h2 onClick={rank}> Ranking </h2> &nbsp;&nbsp;&nbsp; <h2 onClick={()=>rank(true)}> Sair </h2></h1> </span></Container>
-                <p> Shortly <img src={short} /> </p>
-                <Allextracts>
-                <form onSubmit={submitObj} >      
-                <Input type={"url"} background={boolean} placeholder={"Links que cabem no bolso"} onChange={e => setAdd({...add, url: e.target.value })} readOnly={boolean} required="required" />
-                <Button type={"submit"} width={"50%"} heigt={"60px"} >Encurtar link</Button>
+        <AllContainer>
+            <Container width={'100%'} ><span> Seja bem-vindo(a), {add.name ? add.name : "loading..."} <h1> <h2> Home </h2>&nbsp;&nbsp;&nbsp;<h2 onClick={rank}> Ranking </h2> &nbsp;&nbsp;&nbsp; <h2 onClick={() => rank(true)}> Sair </h2></h1> </span></Container>
+            <p> Shortly <img src={short} /> </p>
+            <Allextracts>
+                <form onSubmit={submitObj} >
+                    <Input type={"url"} background={boolean} placeholder={"Links que cabem no bolso"} onChange={e => setAdd({ ...add, url: e.target.value })} readOnly={boolean} required="required" />
+                    <Button type={"submit"} width={"50%"} heigt={"60px"} >Encurtar link</Button>
                 </form>
-                {add.length!==0? add.shortenedUrls.map((value, index)=> <Container background={"#80cc74"} key={index} width={"95%"} height={"65px"} ><span><h1> {value.url} </h1><h2> {value.shortUrl} </h2> <h1>Quantidade de visitas: {value.visitCount} </h1> <p><img src={trash}/></p></span></Container>) : <Container> Ainda não tem nem um shortly :/ manda um ai ;) </Container> }
-                </Allextracts>
-            </AllContainer>
+                {add.length !== 0 ? add.shortenedUrls.map((value, index) => <Container background={"#80cc74"} key={index} width={"95%"} height={"65px"} ><span><h1> {value.url} </h1><h2 onClick={()=>open(value.shortUrl)} > {value.shortUrl} </h2> <h1>Quantidade de visitas: {value.visitCount} </h1> <p onClick={()=>del(value.id)} ><img src={trash} /></p></span></Container>) : <Container> Ainda não tem nem um shortly :/ manda um ai ;) </Container>}
+            </Allextracts>
+        </AllContainer>
     )
 }
 
